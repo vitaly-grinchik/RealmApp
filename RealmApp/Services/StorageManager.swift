@@ -39,9 +39,9 @@ class StorageManager {
         }
     }
     
-    func edit(_ taskList: TaskList, newValue: String) {
+    func edit(_ taskList: TaskList, newTitle: String) {
         write {
-            taskList.title = newValue
+            taskList.title = newTitle
         }
     }
 

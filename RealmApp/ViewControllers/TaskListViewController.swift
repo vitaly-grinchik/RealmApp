@@ -11,7 +11,7 @@ import RealmSwift
 
 final class TaskListViewController: UITableViewController {
 
-    private var taskLists: Results<TaskList>!
+    private var taskList: Results<TaskList>!
     private let storageManager = StorageManager.shared
     
     override func viewDidLoad() {
@@ -24,7 +24,7 @@ final class TaskListViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem = addButton
         navigationItem.leftBarButtonItem = editButtonItem
-        taskLists = storageManager.realm.objects(TaskList.self)
+        taskList = storageManager.realm.objects(TaskList.self)
         createTempData()
     }
     
@@ -35,13 +35,13 @@ final class TaskListViewController: UITableViewController {
     
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        taskLists.count
+        taskList.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
         var content = cell.defaultContentConfiguration()
-        let taskList = taskLists[indexPath.row]
+        let taskList = taskList[indexPath.row]
         content.text = taskList.title
         content.secondaryText = taskList.subTasks.count.formatted()
         cell.contentConfiguration = content
@@ -50,7 +50,7 @@ final class TaskListViewController: UITableViewController {
     
     // MARK: - Table View Data Source
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let taskList = taskLists[indexPath.row]
+        let taskList = taskList[indexPath.row]
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
             storageManager.delete(taskList)
@@ -79,9 +79,9 @@ final class TaskListViewController: UITableViewController {
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
-        guard let tasksVC = segue.destination as? SubTasksViewController else { return }
-        let taskList = taskLists[indexPath.row]
-        tasksVC.taskList = taskList
+        guard let subTasksVC = segue.destination as? SubTasksViewController else { return }
+        let taskList = taskList[indexPath.row]
+        subTasksVC.subTaskList = taskList
     }
 
     @IBAction func sortingList(_ sender: UISegmentedControl) {
@@ -111,7 +111,7 @@ extension TaskListViewController {
         
         let alert = listAlertFactory.createAlert { [weak self] newValue in
             if let taskList, let completion {
-                self?.storageManager.edit(taskList, newValue: newValue)
+                self?.storageManager.edit(taskList, newTitle: newValue)
                 completion()
                 return
             }
@@ -123,8 +123,8 @@ extension TaskListViewController {
     }
     
     private func save(taskListTitle: String) {
-        storageManager.save(taskListTitle) { taskList in
-            let rowIndex = IndexPath(row: taskLists.index(of: taskList) ?? 0, section: 0)
+        storageManager.save(taskListTitle) { taskTitle in
+            let rowIndex = IndexPath(row: taskList.index(of: taskTitle) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }
     }

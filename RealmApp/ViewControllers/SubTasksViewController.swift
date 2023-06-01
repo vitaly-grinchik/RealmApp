@@ -11,7 +11,7 @@ import RealmSwift
 
 class SubTasksViewController: UITableViewController {
     
-    var taskList: TaskList!
+    var subTaskList: TaskList!
     
     private var currentSubTasks: Results<SubTask>!
     private var completedSubTasks: Results<SubTask>!
@@ -19,7 +19,7 @@ class SubTasksViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = taskList.title
+        title = subTaskList.title
         
         let addButton = UIBarButtonItem(
             barButtonSystemItem: .add,
@@ -27,8 +27,8 @@ class SubTasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        currentSubTasks = taskList.subTasks.filter("isComplete = false")
-        completedSubTasks = taskList.subTasks.filter("isComplete = true")
+        currentSubTasks = subTaskList.subTasks.filter("isComplete = false")
+        completedSubTasks = subTaskList.subTasks.filter("isComplete = true")
     }
     
     // MARK: - Table view data source
@@ -41,7 +41,15 @@ class SubTasksViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        section == 0 ? "CURRENT TASKS" : "COMPLETED TASKS"
+        if section == 0 {
+            if currentSubTasks.isEmpty, completedSubTasks.isEmpty {
+                return "No tasks found"
+            } else {
+                return currentSubTasks.isEmpty ? nil : "Current tasks"
+            }
+        } else {
+            return completedSubTasks.isEmpty ? nil : "Completed tasks"
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -79,7 +87,7 @@ extension SubTasksViewController {
     }
     
     private func save(task: String, withNote note: String) {
-        storageManager.save(task, withTaskNote: note, to: taskList) { task in
+        storageManager.save(task, withTaskNote: note, to: subTaskList) { task in
             let rowIndex = IndexPath(row: currentSubTasks.index(of: task) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }
