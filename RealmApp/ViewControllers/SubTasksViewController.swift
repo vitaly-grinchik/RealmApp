@@ -13,8 +13,8 @@ class SubTasksViewController: UITableViewController {
     
     var taskList: TaskList!
     
-    private var currentTasks: Results<SubTask>!
-    private var completedTasks: Results<SubTask>!
+    private var currentSubTasks: Results<SubTask>!
+    private var completedSubTasks: Results<SubTask>!
     private let storageManager = StorageManager.shared
 
     override func viewDidLoad() {
@@ -27,8 +27,8 @@ class SubTasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        currentTasks = taskList.subTasks.filter("isComplete = false")
-        completedTasks = taskList.subTasks.filter("isComplete = true")
+        currentSubTasks = taskList.subTasks.filter("isComplete = false")
+        completedSubTasks = taskList.subTasks.filter("isComplete = true")
     }
     
     // MARK: - Table view data source
@@ -37,7 +37,7 @@ class SubTasksViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        section == 0 ? currentTasks.count : completedTasks.count
+        section == 0 ? currentSubTasks.count : completedSubTasks.count
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -47,7 +47,7 @@ class SubTasksViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TasksCell", for: indexPath)
         var content = cell.defaultContentConfiguration()
-        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        let task = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
         content.text = task.title
         content.secondaryText = task.note
         cell.contentConfiguration = content
@@ -80,7 +80,7 @@ extension SubTasksViewController {
     
     private func save(task: String, withNote note: String) {
         storageManager.save(task, withTaskNote: note, to: taskList) { task in
-            let rowIndex = IndexPath(row: currentTasks.index(of: task) ?? 0, section: 0)
+            let rowIndex = IndexPath(row: currentSubTasks.index(of: task) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }
     }
