@@ -24,7 +24,7 @@ final class TaskListViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem = addButton
         navigationItem.leftBarButtonItem = editButtonItem
-        taskLists = storageManager.realm?.objects(TaskList.self)
+        taskLists = storageManager.realm.objects(TaskList.self)
         createTempData()
     }
     
@@ -79,7 +79,7 @@ final class TaskListViewController: UITableViewController {
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
-        guard let tasksVC = segue.destination as? TasksViewController else { return }
+        guard let tasksVC = segue.destination as? SubTasksViewController else { return }
         let taskList = taskLists[indexPath.row]
         tasksVC.taskList = taskList
     }

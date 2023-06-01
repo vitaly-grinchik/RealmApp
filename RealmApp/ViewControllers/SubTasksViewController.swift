@@ -1,5 +1,5 @@
 //
-//  TasksViewController.swift
+//  SubTasksViewController.swift
 //  RealmApp
 //
 //  Created by Alexey Efimov on 02.07.2018.
@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TasksViewController: UITableViewController {
+class SubTasksViewController: UITableViewController {
     
     var taskList: TaskList!
     
@@ -60,7 +60,7 @@ class TasksViewController: UITableViewController {
 
 }
 
-extension TasksViewController {
+extension SubTasksViewController {
     private func showAlert(with task: SubTask? = nil, completion: (() -> Void)? = nil) {
         let taskAlertFactory = TaskAlertControllerFactory(
             userAction: task != nil ? .editTask : .newTask,
