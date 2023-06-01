@@ -13,8 +13,8 @@ class TasksViewController: UITableViewController {
     
     var taskList: TaskList!
     
-    private var currentTasks: Results<Task>!
-    private var completedTasks: Results<Task>!
+    private var currentTasks: Results<SubTask>!
+    private var completedTasks: Results<SubTask>!
     private let storageManager = StorageManager.shared
 
     override func viewDidLoad() {
@@ -27,8 +27,8 @@ class TasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        currentTasks = taskList.tasks.filter("isComplete = false")
-        completedTasks = taskList.tasks.filter("isComplete = true")
+        currentTasks = taskList.subTasks.filter("isComplete = false")
+        completedTasks = taskList.subTasks.filter("isComplete = true")
     }
     
     // MARK: - Table view data source
@@ -61,7 +61,7 @@ class TasksViewController: UITableViewController {
 }
 
 extension TasksViewController {
-    private func showAlert(with task: Task? = nil, completion: (() -> Void)? = nil) {
+    private func showAlert(with task: SubTask? = nil, completion: (() -> Void)? = nil) {
         let taskAlertFactory = TaskAlertControllerFactory(
             userAction: task != nil ? .editTask : .newTask,
             taskTitle: task?.title,

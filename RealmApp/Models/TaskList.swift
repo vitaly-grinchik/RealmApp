@@ -12,10 +12,10 @@ import Foundation
 class TaskList: Object {
     @Persisted var title = ""
     @Persisted var date = Date()
-    @Persisted var tasks = List<Task>()
+    @Persisted var subTasks = List<SubTask>()
 }
 
-class Task: Object {
+class SubTask: Object {
     @Persisted var title = ""
     @Persisted var note = ""
     @Persisted var date = Date()
