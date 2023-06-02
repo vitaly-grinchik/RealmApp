@@ -40,7 +40,7 @@ class DataManager {
         shoppingList.subTasks.insert(contentsOf: [bread, apples], at: 1)
         
         DispatchQueue.main.async { [unowned self] in
-            storageManager.save([shoppingList, moviesList])
+            storageManager.add([shoppingList, moviesList])
             completion()
         }
     }
