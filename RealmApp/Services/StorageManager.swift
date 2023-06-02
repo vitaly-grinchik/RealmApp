@@ -52,7 +52,7 @@ class StorageManager {
     }
 
     // MARK: - Tasks
-    func save(_ taskTitle: String, withTaskNote taskNote: String, to taskList: TaskList, completion: (SubTask) -> Void) {
+    func add(_ taskTitle: String, withTaskNote taskNote: String, to taskList: TaskList, completion: (SubTask) -> Void) {
         write {
             let task = SubTask(value: [taskTitle, taskNote])
             taskList.subTasks.append(task)

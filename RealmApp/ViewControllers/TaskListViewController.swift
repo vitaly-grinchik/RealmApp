@@ -13,6 +13,7 @@ final class TaskListViewController: UITableViewController {
 
     // Свойство типа Results<TaskList>! автообновляется при каждом запросе БД
     private var taskList: Results<TaskList>!
+    private var currentTaskList: Results<SubTask>!
     private let storageManager = StorageManager.shared
     
     override func viewDidLoad() {
@@ -25,6 +26,7 @@ final class TaskListViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem = addButton
         navigationItem.leftBarButtonItem = editButtonItem
+        
         taskList = storageManager.realm.objects(TaskList.self)
         createTempData()
     }
@@ -44,7 +46,7 @@ final class TaskListViewController: UITableViewController {
         var content = cell.defaultContentConfiguration()
         let taskList = taskList[indexPath.row]
         content.text = taskList.title
-        content.secondaryText = taskList.subTasks.count.formatted()
+        content.secondaryText = countCurrentSubTasks(inTask: taskList).formatted()
         cell.contentConfiguration = content
         return cell
     }
@@ -128,5 +130,15 @@ extension TaskListViewController {
             let rowIndex = IndexPath(row: taskList.index(of: taskTitle) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }
+    }
+}
+
+extension TaskListViewController {
+    private func countCurrentSubTasks(inTask task: TaskList) -> Int {
+        var count = 0
+        task.subTasks.forEach { task in
+            count += task.isComplete ? 0 : 1
+        }
+        return count
     }
 }

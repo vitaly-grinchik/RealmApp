@@ -87,7 +87,7 @@ extension SubTasksViewController {
     }
     
     private func save(task: String, withNote note: String) {
-        storageManager.save(task, withTaskNote: note, to: subTaskList) { task in
+        storageManager.add(task, withTaskNote: note, to: subTaskList) { task in
             let rowIndex = IndexPath(row: currentSubTasks.index(of: task) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }
