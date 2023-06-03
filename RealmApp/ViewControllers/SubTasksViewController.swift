@@ -11,7 +11,7 @@ import RealmSwift
 
 class SubTasksViewController: UITableViewController {
     
-    var subTaskList: TaskList!
+    var taskList: TaskList!
     
     private var currentSubTasks: Results<SubTask>!
     private var completedSubTasks: Results<SubTask>!
@@ -19,7 +19,7 @@ class SubTasksViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = subTaskList.title
+        title = taskList.title
         
         let addButton = UIBarButtonItem(
             barButtonSystemItem: .add,
@@ -27,11 +27,15 @@ class SubTasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        currentSubTasks = subTaskList.subTasks.filter("isComplete = false")
-        completedSubTasks = subTaskList.subTasks.filter("isComplete = true")
+        currentSubTasks = taskList.subTasks.filter("isComplete = false")
+        completedSubTasks = taskList.subTasks.filter("isComplete = true")
+    }
+        
+    @objc private func addButtonPressed() {
+        showAlert()
     }
     
-    // MARK: - Table view data source
+    // MARK: - UITableViewDataSource
     override func numberOfSections(in tableView: UITableView) -> Int {
         2
     }
@@ -40,17 +44,6 @@ class SubTasksViewController: UITableViewController {
         section == 0 ? currentSubTasks.count : completedSubTasks.count
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
-            if currentSubTasks.isEmpty, completedSubTasks.isEmpty {
-                return "No tasks found"
-            } else {
-                return currentSubTasks.isEmpty ? nil : "Current tasks"
-            }
-        } else {
-            return completedSubTasks.isEmpty ? nil : "Completed tasks"
-        }
-    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TasksCell", for: indexPath)
@@ -61,10 +54,20 @@ class SubTasksViewController: UITableViewController {
         cell.contentConfiguration = content
         return cell
     }
-    
-    @objc private func addButtonPressed() {
-        showAlert()
+
+    // MARK: - UITableViewDelegate
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            if taskList.subTasks.isEmpty {
+                return "No tasks found"
+            } else {
+                return currentSubTasks.isEmpty ? nil : "Current tasks"
+            }
+        } else {
+            return completedSubTasks.isEmpty ? nil : "Completed tasks"
+        }
     }
+    
 
 }
 
@@ -87,7 +90,7 @@ extension SubTasksViewController {
     }
     
     private func save(task: String, withNote note: String) {
-        storageManager.add(task, withTaskNote: note, to: subTaskList) { task in
+        storageManager.add(task, withTaskNote: note, to: taskList) { task in
             let rowIndex = IndexPath(row: currentSubTasks.index(of: task) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }

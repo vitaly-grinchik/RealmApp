@@ -24,8 +24,7 @@ final class TaskListViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         
-        navigationItem.rightBarButtonItem = addButton
-        navigationItem.leftBarButtonItem = editButtonItem
+        navigationItem.rightBarButtonItems = [addButton, editButtonItem]
         
         taskList = storageManager.realm.objects(TaskList.self)
         createTempData()
@@ -89,7 +88,7 @@ final class TaskListViewController: UITableViewController {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let subTasksVC = segue.destination as? SubTasksViewController else { return }
         let taskList = taskList[indexPath.row]
-        subTasksVC.subTaskList = taskList
+        subTasksVC.taskList = taskList
     }
 
     @IBAction func sortingList(_ sender: UISegmentedControl) {
