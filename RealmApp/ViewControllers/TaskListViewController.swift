@@ -43,11 +43,16 @@ final class TaskListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
-        var content = cell.defaultContentConfiguration()
         let taskList = taskList[indexPath.row]
+        let currentSubTaskQty = countCurrentSubTasks(inTask: taskList)
+        
+        // Cell config
+        var content = cell.defaultContentConfiguration()
+        cell.accessoryType = (currentSubTaskQty != 0) ? .none : .checkmark
         content.text = taskList.title
-        content.secondaryText = countCurrentSubTasks(inTask: taskList).formatted()
+        content.secondaryText = (currentSubTaskQty != 0) ? currentSubTaskQty.formatted() : nil
         cell.contentConfiguration = content
+        
         return cell
     }
     
@@ -102,6 +107,15 @@ final class TaskListViewController: UITableViewController {
             }
         }
     }
+    
+    private func countCurrentSubTasks(inTask task: TaskList) -> Int {
+        var count = 0
+        task.subTasks.forEach { task in
+            count += task.isComplete ? 0 : 1
+        }
+        return count
+    }
+
 }
 
 // MARK: - AlertController
@@ -130,15 +144,5 @@ extension TaskListViewController {
             let rowIndex = IndexPath(row: taskList.index(of: taskTitle) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }
-    }
-}
-
-extension TaskListViewController {
-    private func countCurrentSubTasks(inTask task: TaskList) -> Int {
-        var count = 0
-        task.subTasks.forEach { task in
-            count += task.isComplete ? 0 : 1
-        }
-        return count
     }
 }
