@@ -14,8 +14,8 @@ protocol TaskListAlert {
 }
 
 protocol SubTaskAlert {
-    var taskTitle: String? { get }
-    var taskNote: String? { get }
+    var subTaskTitle: String? { get }
+    var subTaskNote: String? { get }
     func createAlert(completion: @escaping (String, String) -> Void) -> UIAlertController
 }
 
@@ -72,15 +72,15 @@ extension TaskListAlertControllerFactory {
 }
 
 final class SubTaskAlertControllerFactory: SubTaskAlert {
-    var taskTitle: String?
-    var taskNote: String?
+    var subTaskTitle: String?
+    var subTaskNote: String?
     
     private let userAction: UserAction
     
     init(userAction: UserAction, taskTitle: String?, taskNote: String?) {
         self.userAction = userAction
-        self.taskTitle = taskTitle
-        self.taskNote = taskNote
+        self.subTaskTitle = taskTitle
+        self.subTaskNote = taskNote
     }
     
     func createAlert(completion: @escaping (String, String) -> Void) -> UIAlertController {
@@ -108,12 +108,12 @@ final class SubTaskAlertControllerFactory: SubTaskAlert {
         
         alertController.addTextField { [weak self] textField in
             textField.placeholder = "New Task"
-            textField.text = self?.taskTitle
+            textField.text = self?.subTaskTitle
         }
         
         alertController.addTextField { [weak self] textField in
             textField.placeholder = "Note"
-            textField.text = self?.taskNote
+            textField.text = self?.subTaskNote
         }
         
         return alertController
