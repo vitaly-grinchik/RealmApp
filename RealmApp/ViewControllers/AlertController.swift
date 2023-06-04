@@ -13,7 +13,7 @@ protocol TaskListAlert {
     func createAlert(completion: @escaping (String) -> Void) -> UIAlertController
 }
 
-protocol TaskAlert {
+protocol SubTaskAlert {
     var taskTitle: String? { get }
     var taskNote: String? { get }
     func createAlert(completion: @escaping (String, String) -> Void) -> UIAlertController
@@ -71,7 +71,7 @@ extension TaskListAlertControllerFactory {
     }
 }
 
-final class TaskAlertControllerFactory: TaskAlert {
+final class SubTaskAlertControllerFactory: SubTaskAlert {
     var taskTitle: String?
     var taskNote: String?
     
@@ -121,7 +121,7 @@ final class TaskAlertControllerFactory: TaskAlert {
 }
 
 // MARK: - TaskUserAction
-extension TaskAlertControllerFactory {
+extension SubTaskAlertControllerFactory {
     enum UserAction {
         case newTask
         case editTask

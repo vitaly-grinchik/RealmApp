@@ -73,7 +73,7 @@ class SubTasksViewController: UITableViewController {
 
 extension SubTasksViewController {
     private func showAlert(with task: SubTask? = nil, completion: (() -> Void)? = nil) {
-        let taskAlertFactory = TaskAlertControllerFactory(
+        let taskAlertFactory = SubTaskAlertControllerFactory(
             userAction: task != nil ? .editTask : .newTask,
             taskTitle: task?.title,
             taskNote: task?.note
