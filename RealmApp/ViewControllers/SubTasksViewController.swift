@@ -13,8 +13,9 @@ class SubTasksViewController: UITableViewController {
     
     var task: Task!
     
-    private var currentSubTasks: Results<SubTask>!
-    private var completedSubTasks: Results<SubTask>!
+    private var currentSubTasks: Results<Task>!
+    private var completedSubTasks: Results<Task>!
+    
     private let storageManager = StorageManager.shared
 
     override func viewDidLoad() {
@@ -27,6 +28,7 @@ class SubTasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
+        
         currentSubTasks = task.subTasks.filter("isComplete = false")
         completedSubTasks = task.subTasks.filter("isComplete = true")
     }
@@ -71,7 +73,9 @@ class SubTasksViewController: UITableViewController {
         
         let subTask = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
-            storageManager.delete(subTask, from: task)
+            print(indexPath)
+            
+//            storageManager.delete(subTask, from: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         

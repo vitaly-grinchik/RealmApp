@@ -25,8 +25,8 @@ final class TaskListViewController: UITableViewController {
         
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
         
-        tasks = storageManager.realm.objects(Task.self)
         createTempData()
+        tasks = storageManager.realm.objects(Task.self)
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -41,8 +41,8 @@ class StorageManager {
     
     func delete(_ subtask: SubTask, from task: Task) {
         write {
-            let subTaskToFind = realm.objects(SubTask.self).where { $0 == subtask }
-//            realm.delete()
+            guard let subTaskIndex = (task.subTasks.index { $0 == subtask }) else { return }
+            realm.delete(task.subTasks[subTaskIndex])
         }
     }
     
@@ -67,7 +67,7 @@ class StorageManager {
         }
     }
     
-    // Realm write transaction
+    // Realm state modifying (create/update/delete) transaction -> write method
     private func write(completion: () -> Void) {
         do {
             try realm.write {
