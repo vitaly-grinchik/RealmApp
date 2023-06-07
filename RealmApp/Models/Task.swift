@@ -1,5 +1,5 @@
 //
-//  TaskList.swift
+//  Task.swift
 //  RealmApp
 //
 //  Created by Alexey Efimov on 08.10.2021.
@@ -9,7 +9,7 @@
 import RealmSwift
 import Foundation
 
-class TaskList: Object {
+class Task: Object {
     @Persisted var title = ""
     @Persisted var date = Date()
     @Persisted var subTasks = List<SubTask>()

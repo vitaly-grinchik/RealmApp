@@ -15,10 +15,10 @@ class DataManager {
     private init() {}
     
     func createTempData(completion: @escaping () -> Void ) {
-        let shoppingList = TaskList()
+        let shoppingList = Task()
         shoppingList.title = "Shopping List"
         
-        let moviesList = TaskList(
+        let moviesList = Task(
             value: [
                 "Movies List",
                 Date(),
@@ -40,7 +40,8 @@ class DataManager {
         shoppingList.subTasks.insert(contentsOf: [bread, apples], at: 1)
         
         DispatchQueue.main.async { [unowned self] in
-            storageManager.add([shoppingList, moviesList])
+            storageManager.add(shoppingList)
+            storageManager.add(moviesList)
             completion()
         }
     }

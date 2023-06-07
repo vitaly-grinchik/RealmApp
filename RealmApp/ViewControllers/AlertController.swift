@@ -9,7 +9,7 @@
 import UIKit
 
 protocol TaskListAlert {
-    var listTitle: String? { get }
+    var taskTitle: String? { get }
     func createAlert(completion: @escaping (String) -> Void) -> UIAlertController
 }
 
@@ -19,26 +19,26 @@ protocol SubTaskAlert {
     func createAlert(completion: @escaping (String, String) -> Void) -> UIAlertController
 }
 
-final class TaskListAlertControllerFactory: TaskListAlert {
-    var listTitle: String?
+final class TaskAlertControllerFactory: TaskListAlert {
+    var taskTitle: String?
     private let userAction: UserAction
     
-    init(userAction: UserAction, listTitle: String?) {
+    init(userAction: UserAction, taskTitle: String?) {
         self.userAction = userAction
-        self.listTitle = listTitle
+        self.taskTitle = taskTitle
     }
     
     func createAlert(completion: @escaping (String) -> Void) -> UIAlertController {
         let alertController = UIAlertController(
             title: userAction.title,
-            message: "Please set title for new task list",
+            message: "Please set title for new task",
             preferredStyle: .alert
         )
         
         let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
-            guard let listTitle = alertController.textFields?.first?.text else { return }
-            guard !listTitle.isEmpty else { return }
-            completion(listTitle)
+            guard let taskTitle = alertController.textFields?.first?.text else { return }
+            guard !taskTitle.isEmpty else { return }
+            completion(taskTitle)
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
@@ -46,8 +46,8 @@ final class TaskListAlertControllerFactory: TaskListAlert {
         alertController.addAction(saveAction)
         alertController.addAction(cancelAction)
         alertController.addTextField { [weak self] textField in
-            textField.placeholder = "New List"
-            textField.text = self?.listTitle
+            textField.placeholder = "New task"
+            textField.text = self?.taskTitle
         }
         
         return alertController
@@ -55,17 +55,17 @@ final class TaskListAlertControllerFactory: TaskListAlert {
 }
 
 // MARK: - TaskListUserAction
-extension TaskListAlertControllerFactory {
+extension TaskAlertControllerFactory {
     enum UserAction {
-        case newList
-        case editList
+        case newTask
+        case editTask
         
         var title: String {
             switch self {
-            case .newList:
-                return "New List"
-            case .editList:
-                return "Edit List"
+            case .newTask:
+                return "New Task"
+            case .editTask:
+                return "Edit Task"
             }
         }
     }
@@ -77,10 +77,10 @@ final class SubTaskAlertControllerFactory: SubTaskAlert {
     
     private let userAction: UserAction
     
-    init(userAction: UserAction, taskTitle: String?, taskNote: String?) {
+    init(userAction: UserAction, subTaskTitle: String?, subTaskNote: String?) {
         self.userAction = userAction
-        self.subTaskTitle = taskTitle
-        self.subTaskNote = taskNote
+        self.subTaskTitle = subTaskTitle
+        self.subTaskNote = subTaskNote
     }
     
     func createAlert(completion: @escaping (String, String) -> Void) -> UIAlertController {
@@ -91,13 +91,13 @@ final class SubTaskAlertControllerFactory: SubTaskAlert {
         )
         
         let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
-            guard let taskTitle = alertController.textFields?.first?.text else { return }
-            guard !taskTitle.isEmpty else { return }
+            guard let subTaskTitle = alertController.textFields?.first?.text else { return }
+            guard !subTaskTitle.isEmpty else { return }
             
-            if let taskNote = alertController.textFields?.last?.text, !taskNote.isEmpty {
-                completion(taskTitle, taskNote)
+            if let subTaskNote = alertController.textFields?.last?.text, !subTaskNote.isEmpty {
+                completion(subTaskTitle, subTaskNote)
             } else {
-                completion(taskTitle, "")
+                completion(subTaskTitle, "")
             }
         }
         
@@ -107,7 +107,7 @@ final class SubTaskAlertControllerFactory: SubTaskAlert {
         alertController.addAction(cancelAction)
         
         alertController.addTextField { [weak self] textField in
-            textField.placeholder = "New Task"
+            textField.placeholder = "New Subtask"
             textField.text = self?.subTaskTitle
         }
         
@@ -123,15 +123,15 @@ final class SubTaskAlertControllerFactory: SubTaskAlert {
 // MARK: - TaskUserAction
 extension SubTaskAlertControllerFactory {
     enum UserAction {
-        case newTask
-        case editTask
+        case newSubTask
+        case editSubTask
         
         var title: String {
             switch self {
-            case .newTask:
-                return "New Task"
-            case .editTask:
-                return "Edit Task"
+            case .newSubTask:
+                return "New Subtask"
+            case .editSubTask:
+                return "Edit Subtask"
             }
         }
     }

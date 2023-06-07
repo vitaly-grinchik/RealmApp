@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		A804828427103A010095A493 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828327103A010095A493 /* DataManager.swift */; };
 		A804828627103A100095A493 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828527103A100095A493 /* StorageManager.swift */; };
-		A804828827103BFD0095A493 /* TaskList.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828727103BFD0095A493 /* TaskList.swift */; };
+		A804828827103BFD0095A493 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828727103BFD0095A493 /* Task.swift */; };
 		A86E95B429DDA53D000A9FC2 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = A86E95B329DDA53D000A9FC2 /* Realm */; };
 		A86E95B629DDA53D000A9FC2 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A86E95B529DDA53D000A9FC2 /* RealmSwift */; };
 		A872A10F20E9D82400ECE2BA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A872A10E20E9D82400ECE2BA /* AppDelegate.swift */; };
@@ -24,7 +24,7 @@
 /* Begin PBXFileReference section */
 		A804828327103A010095A493 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		A804828527103A100095A493 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
-		A804828727103BFD0095A493 /* TaskList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskList.swift; sourceTree = "<group>"; };
+		A804828727103BFD0095A493 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		A872A10B20E9D82400ECE2BA /* RealmApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A872A10E20E9D82400ECE2BA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A872A11320E9D82400ECE2BA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -91,7 +91,7 @@
 		A8969B33270F34B700F7DED0 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				A804828727103BFD0095A493 /* TaskList.swift */,
+				A804828727103BFD0095A493 /* Task.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -210,7 +210,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A804828827103BFD0095A493 /* TaskList.swift in Sources */,
+				A804828827103BFD0095A493 /* Task.swift in Sources */,
 				A8E78FE9241A76EE00E66973 /* AlertController.swift in Sources */,
 				A804828427103A010095A493 /* DataManager.swift in Sources */,
 				A872A10F20E9D82400ECE2BA /* AppDelegate.swift in Sources */,

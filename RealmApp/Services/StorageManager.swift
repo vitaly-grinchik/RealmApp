@@ -17,49 +17,57 @@ class StorageManager {
     
     private init() {}
     
-    // MARK: - Task List
-    func add(_ taskLists: [TaskList]) {
-        write {
-            realm.add(taskLists)
-        }
-    }
-    
-    func save(_ taskListTitle: String, completion: (TaskList) -> Void) {
-        write {
-            let taskList = TaskList(value: [taskListTitle])
-            realm.add(taskList)
-            completion(taskList)
-        }
-    }
-    
-    func delete(_ taskList: TaskList) {
-        write {
-            realm.delete(taskList.subTasks)
-            realm.delete(taskList)
-        }
-    }
-    
-    func edit(_ taskList: TaskList, newTitle: String) {
-        write {
-            taskList.title = newTitle
-        }
-    }
-
-    func done(_ taskList: TaskList) {
-        write {
-            taskList.subTasks.setValue(true, forKey: "isComplete")
-        }
-    }
-
     // MARK: - Tasks
-    func add(_ taskTitle: String, withTaskNote taskNote: String, to taskList: TaskList, completion: (SubTask) -> Void) {
+    func add(_ task: Task) {
         write {
-            let task = SubTask(value: [taskTitle, taskNote])
-            taskList.subTasks.append(task)
+            realm.add(task)
+        }
+    }
+    
+    func save(taskWithTitle title: String, completion: (Task) -> Void) {
+        write {
+            let task = Task(value: [title])
+            realm.add(task)
             completion(task)
         }
     }
     
+    func delete(_ task: Task) {
+        write {
+            realm.delete(task.subTasks)
+            realm.delete(task)
+        }
+    }
+    
+    func delete(_ subtask: SubTask, from task: Task) {
+        write {
+            let subTaskToFind = realm.objects(SubTask.self).where { $0 == subtask }
+//            realm.delete()
+        }
+    }
+    
+    func update(_ task: Task, withNewTitle title: String) {
+        write {
+            task.title = title
+        }
+    }
+
+    func done(_ task: Task) {
+        write {
+            task.subTasks.setValue(true, forKey: "isComplete")
+        }
+    }
+
+    // MARK: - Subtasks
+    func add(subTaskWithTitle title: String, withNote note: String, to task: Task, completion: (SubTask) -> Void) {
+        write {
+            let subTask = SubTask(value: [title, note])
+            task.subTasks.append(subTask)
+            completion(subTask)
+        }
+    }
+    
+    // Realm write transaction
     private func write(completion: () -> Void) {
         do {
             try realm.write {
