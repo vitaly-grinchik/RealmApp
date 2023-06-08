@@ -41,8 +41,9 @@ class StorageManager {
     
     func delete(_ subtask: SubTask, from task: Task) {
         write {
-            guard let subTaskIndex = (task.subTasks.index { $0 == subtask }) else { return }
-            realm.delete(task.subTasks[subTaskIndex])
+            guard let index = task.subTasks.firstIndex(of: subtask) else { return }
+            let subTaskToDelete = task.subTasks[index]
+            realm.delete(subTaskToDelete)
         }
     }
     

@@ -13,8 +13,8 @@ class SubTasksViewController: UITableViewController {
     
     var task: Task!
     
-    private var currentSubTasks: Results<Task>!
-    private var completedSubTasks: Results<Task>!
+    private var currentSubTasks: Results<SubTask>!
+    private var completedSubTasks: Results<SubTask>!
     
     private let storageManager = StorageManager.shared
 
@@ -75,7 +75,7 @@ class SubTasksViewController: UITableViewController {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
             print(indexPath)
             
-//            storageManager.delete(subTask, from: task)
+            storageManager.delete(subTask, from: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
