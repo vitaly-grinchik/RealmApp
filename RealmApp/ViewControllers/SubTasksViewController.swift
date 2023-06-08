@@ -17,7 +17,7 @@ class SubTasksViewController: UITableViewController {
     private var completedSubTasks: Results<SubTask>!
     
     private let storageManager = StorageManager.shared
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = task.title
@@ -28,13 +28,16 @@ class SubTasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        
-        currentSubTasks = task.subTasks.filter("isComplete = false")
-        completedSubTasks = task.subTasks.filter("isComplete = true")
+        updateDataSource()
     }
         
     @objc private func addButtonPressed() {
         showAlert()
+    }
+    
+    private func updateDataSource() {
+        currentSubTasks = task.subTasks.filter("isComplete = false")
+        completedSubTasks = task.subTasks.filter("isComplete = true")
     }
     
     // MARK: - UITableViewDataSource
@@ -76,6 +79,7 @@ class SubTasksViewController: UITableViewController {
             print(indexPath)
             
             storageManager.delete(subTask, from: task)
+            task.subTasks.forEach { print($0.title) }
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
