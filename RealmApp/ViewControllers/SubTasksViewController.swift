@@ -76,10 +76,8 @@ class SubTasksViewController: UITableViewController {
         
         let subTask = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
-            print(indexPath)
-            
             storageManager.delete(subTask, from: task)
-            task.subTasks.forEach { print($0.title) }
+//            task.subTasks.forEach { print($0.title) }
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
@@ -113,7 +111,7 @@ extension SubTasksViewController {
         
         let alert = taskAlertFactory.createAlert { [weak self] title, note in
             if let subTask, let completion {
-                // TODO: - edit task
+//                self?.save(subTask: title, withNote: note)
             } else {
                 
             }
@@ -123,7 +121,7 @@ extension SubTasksViewController {
     }
     
 //    private func save(subTask: String, withNote note: String) {
-//        storageManager.add(subTaskWithTitle: subTask, withNote: note) { subTask in
+//        storageManager.add(subTaskWithTitle: subTask, withNote: note, to: task) { subTask in
 //            let rowIndex = IndexPath(row: currentSubTasks.index(of: subTask) ?? 0, section: 0)
 //            tableView.insertRows(at: [rowIndex], with: .automatic)
 //        }

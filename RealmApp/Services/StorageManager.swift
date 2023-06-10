@@ -41,9 +41,7 @@ class StorageManager {
     
     func delete(_ subtask: SubTask, from task: Task) {
         write {
-            guard let index = task.subTasks.firstIndex(of: subtask) else
-            { print("NO INDEX DETECTED")
-                return }
+            guard let index = task.subTasks.index(of: subtask) else { return }
             task.subTasks.remove(at: index)
         }
     }
