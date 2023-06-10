@@ -76,12 +76,13 @@ final class TaskListViewController: UITableViewController {
         let task = tasks[indexPath.row]
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
-            storageManager.delete(task)
+            storageManager.deleteTask(task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
             showAlert(for: task) {
+                // Выполнение замыкания ПОСЛЕ закрытия AlertController
                 tableView.reloadRows(at: [indexPath], with: .automatic)
             }
             isDone(true)
@@ -120,21 +121,21 @@ extension TaskListViewController {
         let alert = taskAlertController.createAlert { [weak self] newTitle in
             // в замыкании предается String из поля алерта по нажатии Save
             if let task, let completion {
-                self?.storageManager.update(task, withNewTitle: newTitle)
+                self?.storageManager.save(task, withNewTitle: newTitle)
                 // Выполнение замыкания ПОСЛЕ закрытия AlertController
                 completion()
                 return
             }
-            self?.save(taskTitle: newTitle)
+            self?.saveTask(with: newTitle)
         }
         
         present(alert, animated: true)
     }
     
-    private func save(taskTitle: String) {
-        storageManager.save(taskWithTitle: taskTitle) { taskTitle in
-            let rowIndex = IndexPath(row: tasks.index(of: taskTitle) ?? 0, section: 0)
-            tableView.insertRows(at: [rowIndex], with: .automatic)
+    private func saveTask(with title: String) {
+        storageManager.saveTask(withTitle: title) { task in
+            let index = IndexPath(row: tasks.count - 1, section: 0)
+            tableView.insertRows(at: [index], with: .automatic)
         }
     }
 }

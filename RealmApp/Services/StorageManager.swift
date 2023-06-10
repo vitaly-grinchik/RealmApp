@@ -17,10 +17,10 @@ class StorageManager {
     
     private init() {}
     
-    // MARK: - Tasks
-    func add(_ task: Task) {
+    // MARK: - CRUD
+    func save(_ tasks: [Task]) {
         write {
-            realm.add(task)
+            realm.add(tasks)
         }
     }
     
@@ -32,6 +32,36 @@ class StorageManager {
         }
     }
     
+    func save(_ task: Task, withNewTitle title: String) {
+        write {
+            task.title = title
+        }
+    }
+    
+    func save(subTaskWithTitle title: String,
+              withNote note: String,
+              toTask task: Task,
+              completion: (SubTask) -> Void)
+    {
+        write {
+            let subTask = SubTask(value: [title, note])
+            task.subTasks.append(subTask)
+            completion(subTask)
+        }
+    }
+    
+    func save(_ subTask: SubTask,
+              inTask task: Task,
+              withNewTitle title: String,
+              withNewNote note: String)
+    {
+        write {
+            guard let index = task.subTasks.index(of: subTask) else { return }
+            task.subTasks[index].title = title
+            task.subTasks[index].note = note
+        }
+    }
+    
     func delete(_ task: Task) {
         write {
             realm.delete(task.subTasks)
@@ -39,23 +69,10 @@ class StorageManager {
         }
     }
     
-    func delete(_ subtask: SubTask, from task: Task) {
+    func delete(_ subtask: SubTask, fromTask task: Task) {
         write {
             guard let index = task.subTasks.index(of: subtask) else { return }
             task.subTasks.remove(at: index)
-        }
-    }
-    
-    func update(_ task: Task, withNewTitle title: String) {
-        write {
-            task.title = title
-        }
-    }
-
-    func update(_ subTask: SubTask, ofTask task: Task, withNewTitle title: String) {
-        write {
-            guard let index = task.subTasks.index(of: subTask) else { return }
-            
         }
     }
     
@@ -64,16 +81,14 @@ class StorageManager {
             task.subTasks.setValue(true, forKey: "isComplete")
         }
     }
-
-    // MARK: - Subtasks
-    func add(subTaskWithTitle title: String, withNote note: String, to task: Task, completion: (SubTask) -> Void) {
+    
+    func done(_ subTask: SubTask, inTask task: Task) {
         write {
-            let subTask = SubTask(value: [title, note])
-            task.subTasks.append(subTask)
-            completion(subTask)
+            guard let index = task.subTasks.index(of: subTask) else { return }
+            task.subTasks[index].setValue(true, forKey: "isComplete")
         }
     }
-    
+
     // Realm state modifying (create/update/delete) transaction -> write method
     private func write(completion: () -> Void) {
         do {
@@ -83,6 +98,6 @@ class StorageManager {
         } catch {
             print(error.localizedDescription)
         }
-        
     }
+    
 }

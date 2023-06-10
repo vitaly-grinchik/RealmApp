@@ -28,16 +28,28 @@ class SubTasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        updateDataSource()
-    }
+        editButtonItem.isEnabled = task.subTasks.isEmpty ? false : true
         
+        currentSubTasks = task.subTasks.filter("isComplete = false")
+        completedSubTasks = task.subTasks.filter("isComplete = true")
+        
+        updateEditButtonStatus()
+        
+        
+    }
+     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateEditButtonStatus()
+    }
+    
     @objc private func addButtonPressed() {
         showAlert()
     }
     
-    private func updateDataSource() {
-        currentSubTasks = task.subTasks.filter("isComplete = false")
-        completedSubTasks = task.subTasks.filter("isComplete = true")
+    private func updateEditButtonStatus() {
+        // TODO: - Update headers?
+        editButtonItem.isEnabled = task.subTasks.isEmpty ? false : true
     }
     
     // MARK: - UITableViewDataSource
@@ -76,12 +88,13 @@ class SubTasksViewController: UITableViewController {
         
         let subTask = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
-            storageManager.delete(subTask, from: task)
-//            task.subTasks.forEach { print($0.title) }
+            storageManager.deleteSubTask(subTask, fromTask: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            updateEditButtonStatus()
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
+            
             
             isDone(true)
         }
@@ -96,35 +109,40 @@ class SubTasksViewController: UITableViewController {
         
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
-    
 
 }
 
 // MARK: - SubTask Alert
 extension SubTasksViewController {
-    private func showAlert(with subTask: SubTask? = nil, completion: (() -> Void)? = nil) {
+    private func showAlert(for subTask: SubTask? = nil, completion: (() -> Void)? = nil) {
         let taskAlertFactory = SubTaskAlertControllerFactory(
             userAction: subTask != nil ? .editSubTask : .newSubTask,
             subTaskTitle: subTask?.title,
             subTaskNote: subTask?.note
         )
         
-        let alert = taskAlertFactory.createAlert { [weak self] title, note in
+        let alert = taskAlertFactory.createAlert { [unowned self] title, note in
             if let subTask, let completion {
-                self?.storageManager.update(title, withNewTitle: note)
-            } else {
-                
+                storageManager.save(subTask,
+                                      inTask: task,
+                                      withNewTitle: title,
+                                      withNewNote: note
+                )
+                completion()
+                return
             }
+            saveSubTask(with: title, and: note)
         }
         
         present(alert, animated: true)
     }
     
-//    private func save(subTask: String, withNote note: String) {
-//        storageManager.add(subTaskWithTitle: subTask, withNote: note, to: task) { subTask in
-//            let rowIndex = IndexPath(row: currentSubTasks.index(of: subTask) ?? 0, section: 0)
-//            tableView.insertRows(at: [rowIndex], with: .automatic)
-//        }
-//
-//    }
+    private func saveSubTask(with title: String, and note: String) {
+        storageManager.addSubTask(withTitle: title, withNote: note, toTask: task) { subTask in
+            let index = IndexPath(row: currentSubTasks.count - 1, section: 0)
+            tableView.insertRows(at: [index], with: .automatic)
+            updateEditButtonStatus()
+        }
+    }
+    
 }
