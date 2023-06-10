@@ -112,18 +112,19 @@ final class TaskListViewController: UITableViewController {
 // MARK: - TaskList ALert
 extension TaskListViewController {
     private func showAlert(for task: Task? = nil, completion: (() -> Void)? = nil) {
-        let taskAlert = TaskAlertControllerFactory(
+        let taskAlertController = TaskAlertControllerFactory(
             userAction: task != nil ? .editTask : .newTask,
             taskTitle: task?.title
         )
         
-        let alert = taskAlert.createAlert { [weak self] newTitle in
+        let alert = taskAlertController.createAlert { [weak self] newTitle in
+            // в замыкании предается String из поля алерта по нажатии Save
             if let task, let completion {
                 self?.storageManager.update(task, withNewTitle: newTitle)
+                // Выполнение замыкания ПОСЛЕ закрытия AlertController
                 completion()
                 return
             }
-            
             self?.save(taskTitle: newTitle)
         }
         

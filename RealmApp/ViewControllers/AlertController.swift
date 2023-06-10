@@ -22,16 +22,17 @@ protocol SubTaskAlert {
 final class TaskAlertControllerFactory: TaskListAlert {
     var taskTitle: String?
     private let userAction: UserAction
-    
+    // Изначальное определение типа Алерта с соотвтетсвующим названием и сообщением
     init(userAction: UserAction, taskTitle: String?) {
         self.userAction = userAction
         self.taskTitle = taskTitle
     }
-    
+    // Создание полностью сконфигурированного AlertController для Task
+    // По нажатии кнокпи Save передает строку из текстового поля
     func createAlert(completion: @escaping (String) -> Void) -> UIAlertController {
         let alertController = UIAlertController(
             title: userAction.title,
-            message: "Please set title for new task",
+            message: " Set title for a new task",
             preferredStyle: .alert
         )
         
@@ -86,7 +87,7 @@ final class SubTaskAlertControllerFactory: SubTaskAlert {
     func createAlert(completion: @escaping (String, String) -> Void) -> UIAlertController {
         let alertController = UIAlertController(
             title: userAction.title,
-            message: "What do you want to do?",
+            message: "Add subtask here",
             preferredStyle: .alert
         )
         

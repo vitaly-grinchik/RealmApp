@@ -52,6 +52,13 @@ class StorageManager {
         }
     }
 
+    func update(_ subTask: SubTask, ofTask task: Task, withNewTitle title: String) {
+        write {
+            guard let index = task.subTasks.index(of: subTask) else { return }
+            
+        }
+    }
+    
     func done(_ task: Task) {
         write {
             task.subTasks.setValue(true, forKey: "isComplete")

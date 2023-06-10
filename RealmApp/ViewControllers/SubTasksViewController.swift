@@ -111,7 +111,7 @@ extension SubTasksViewController {
         
         let alert = taskAlertFactory.createAlert { [weak self] title, note in
             if let subTask, let completion {
-//                self?.save(subTask: title, withNote: note)
+                self?.storageManager.update(title, withNewTitle: note)
             } else {
                 
             }
