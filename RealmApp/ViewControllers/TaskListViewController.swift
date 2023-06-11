@@ -76,7 +76,7 @@ final class TaskListViewController: UITableViewController {
         let task = tasks[indexPath.row]
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
-            storageManager.deleteTask(task)
+            storageManager.delete(task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
@@ -133,7 +133,7 @@ extension TaskListViewController {
     }
     
     private func saveTask(with title: String) {
-        storageManager.saveTask(withTitle: title) { task in
+        storageManager.save(taskWithTitle: title) { task in
             let index = IndexPath(row: tasks.count - 1, section: 0)
             tableView.insertRows(at: [index], with: .automatic)
         }
