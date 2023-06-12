@@ -89,6 +89,20 @@ final class StorageManager {
         }
     }
 
+    
+    func setStatus(ofTask task: Task, asCompleted status: Bool) {
+        write {
+            task.subTasks.setValue(status, forKey: "isComplete")
+        }
+    }
+    
+    func setStatus(ofSubtask subTask: SubTask, inTask task: Task, asCompleted status: Bool) {
+        write {
+            guard let index = task.subTasks.index(of: subTask) else { return }
+            task.subTasks[index].setValue(status, forKey: "isComplete")
+        }
+    }
+    
     // Realm state modifying (create/update/delete) transaction -> write method
     private func write(completion: () -> Void) {
         do {
