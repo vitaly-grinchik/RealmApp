@@ -29,13 +29,9 @@ final class SubTasksViewController: UITableViewController {
         updateEditButtonState()
     }
      
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateEditButtonState()
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        updateEditButtonState()
         if task.subTasks.isEmpty {
             showAlert()
         }
