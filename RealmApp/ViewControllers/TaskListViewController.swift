@@ -11,7 +11,7 @@ import RealmSwift
 
 final class TaskListViewController: UITableViewController {
 
-    // Свойство типа Results<TaskList>! автообновляется при каждом запросе БД
+    // Свойство типа Results<Task>! автообновляется при каждом запросе БД
     private var tasks: Results<Task>!
     private let storageManager = StorageManager.shared
     

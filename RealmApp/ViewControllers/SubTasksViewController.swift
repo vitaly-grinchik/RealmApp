@@ -13,10 +13,11 @@ class SubTasksViewController: UITableViewController {
     
     var task: Task!
     
+    private let storageManager = StorageManager.shared
+
     private var currentSubTasks: Results<SubTask>!
     private var completedSubTasks: Results<SubTask>!
     
-    private let storageManager = StorageManager.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +49,6 @@ class SubTasksViewController: UITableViewController {
     }
     
     private func updateEditButtonStatus() {
-        // TODO: - Update headers?
         editButtonItem.isEnabled = task.subTasks.isEmpty ? false : true
     }
     
@@ -63,32 +63,26 @@ class SubTasksViewController: UITableViewController {
         
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TasksCell", for: indexPath)
-        var content = cell.defaultContentConfiguration()
         let subTask = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
+        
+        var content = cell.defaultContentConfiguration()
         content.text = subTask.title
         content.secondaryText = subTask.note
         cell.contentConfiguration = content
+        cell.accessoryType = subTask.isComplete ? .checkmark : .none
         return cell
     }
 
-    // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
-            if task.subTasks.isEmpty {
-                return "No tasks found"
-            } else {
-                return currentSubTasks.isEmpty ? nil : "Current tasks"
-            }
-        } else {
-            return completedSubTasks.isEmpty ? nil : "Completed tasks"
-        }
+        setHeader(forSection: section)
     }
-    
+
+    // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let subTask = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
-            storageManager.deleteSubTask(subTask, fromTask: task)
+            storageManager.delete(subTask, fromTask: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             updateEditButtonStatus()
         }
@@ -104,10 +98,19 @@ class SubTasksViewController: UITableViewController {
             isDone(true)
         }
         
+        let undoneAction = UIContextualAction(style: .normal, title: "Done") { [unowned self] _, _, isDone in
+
+            isDone(true)
+        }
+        
         editAction.backgroundColor = .orange
         doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
 }
@@ -138,10 +141,27 @@ extension SubTasksViewController {
     }
     
     private func saveSubTask(with title: String, and note: String) {
-        storageManager.addSubTask(withTitle: title, withNote: note, toTask: task) { subTask in
+        storageManager.save(subTaskWithTitle: title, withNote: note, toTask: task) { subTask in
             let index = IndexPath(row: currentSubTasks.count - 1, section: 0)
             tableView.insertRows(at: [index], with: .automatic)
             updateEditButtonStatus()
+        }
+    }
+    
+}
+
+// MARK: - Section Headers setting
+extension SubTasksViewController {
+    
+    private func setHeader(forSection section: Int) -> String? {
+        if section == 0 {
+            if task.subTasks.isEmpty {
+                return "No tasks found"
+            } else {
+                return currentSubTasks.isEmpty ? nil : "CURRENT TASKS"
+            }
+        } else {
+            return completedSubTasks.isEmpty ? nil : "COMPLETED TASKS"
         }
     }
     
