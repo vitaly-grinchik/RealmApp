@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class SubTasksViewController: UITableViewController {
+final class SubTasksViewController: UITableViewController {
     
     var task: Task!
     
@@ -23,20 +23,11 @@ class SubTasksViewController: UITableViewController {
         super.viewDidLoad()
         title = task.title
         
-        let addButton = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addButtonPressed)
-        )
-        navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        editButtonItem.isEnabled = task.subTasks.isEmpty ? false : true
-        
         currentSubTasks = task.subTasks.filter("isComplete = false")
         completedSubTasks = task.subTasks.filter("isComplete = true")
         
+        setupNavigationBar()
         updateEditButtonStatus()
-        
-        
     }
      
     override func viewWillAppear(_ animated: Bool) {
@@ -46,6 +37,16 @@ class SubTasksViewController: UITableViewController {
     
     @objc private func addButtonPressed() {
         showAlert()
+    }
+    
+    private func setupNavigationBar() {
+        let addButton = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addButtonPressed)
+        )
+        navigationItem.rightBarButtonItems = [addButton, editButtonItem]
+        editButtonItem.isEnabled = task.subTasks.isEmpty ? false : true
     }
     
     private func updateEditButtonStatus() {

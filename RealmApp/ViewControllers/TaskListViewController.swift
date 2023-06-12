@@ -11,7 +11,7 @@ import RealmSwift
 
 final class TaskListViewController: UITableViewController {
 
-    // Свойство типа Results<Task>! автообновляется при каждом запросе БД
+    // Данные типа Results автобновляемы, т.е. отображают актуальное состояние БД
     private var tasks: Results<Task>!
     private let storageManager = StorageManager.shared
     
@@ -27,11 +27,14 @@ final class TaskListViewController: UITableViewController {
         
         createTempData()
         tasks = storageManager.realm.objects(Task.self)
+        
+        updateEditButtonStatus()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
+        updateEditButtonStatus()
     }
     
     @IBAction func sortingList(_ sender: UISegmentedControl) {
@@ -48,6 +51,10 @@ final class TaskListViewController: UITableViewController {
                 tableView.reloadData()
             }
         }
+    }
+    
+    private func updateEditButtonStatus() {
+        editButtonItem.isEnabled = tasks.isEmpty ? false : true
     }
     
     // MARK: - UITableViewDataSource
@@ -78,6 +85,7 @@ final class TaskListViewController: UITableViewController {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
             storageManager.delete(task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            updateEditButtonStatus()
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
@@ -136,6 +144,7 @@ extension TaskListViewController {
         storageManager.save(taskWithTitle: title) { task in
             let index = IndexPath(row: tasks.count - 1, section: 0)
             tableView.insertRows(at: [index], with: .automatic)
+            updateEditButtonStatus()
         }
     }
 }
