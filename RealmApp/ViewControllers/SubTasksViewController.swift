@@ -18,7 +18,6 @@ final class SubTasksViewController: UITableViewController {
     private var currentSubTasks: Results<SubTask>!
     private var completedSubTasks: Results<SubTask>!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = task.title
@@ -27,12 +26,12 @@ final class SubTasksViewController: UITableViewController {
         completedSubTasks = task.subTasks.filter("isComplete = true")
         
         setupNavigationBar()
-        updateEditButtonStatus()
+        updateEditButtonState()
     }
      
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateEditButtonStatus()
+        updateEditButtonState()
     }
     
     @objc private func addButtonPressed() {
@@ -46,11 +45,10 @@ final class SubTasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        editButtonItem.isEnabled = task.subTasks.isEmpty ? false : true
     }
     
-    private func updateEditButtonStatus() {
-        editButtonItem.isEnabled = task.subTasks.isEmpty ? false : true
+    private func updateEditButtonState() {
+        editButtonItem.isEnabled = !task.subTasks.isEmpty
     }
     
     // MARK: - UITableViewDataSource
@@ -85,7 +83,7 @@ final class SubTasksViewController: UITableViewController {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
             storageManager.delete(subTask, fromTask: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
-            updateEditButtonStatus()
+            updateEditButtonState()
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
@@ -119,7 +117,7 @@ final class SubTasksViewController: UITableViewController {
         doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         undoneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         // Collecting all actions together
-        let actionSet = [(indexPath.section == 0 ? doneAction : undoneAction), editAction, deleteAction]
+        let actionSet = [(subTask.isComplete ? undoneAction : doneAction), editAction, deleteAction]
         
         return UISwipeActionsConfiguration(actions: actionSet)
     }
@@ -159,7 +157,7 @@ extension SubTasksViewController {
         storageManager.save(subTaskWithTitle: title, withNote: note, toTask: task) { subTask in
             let index = IndexPath(row: currentSubTasks.count - 1, section: 0)
             tableView.insertRows(at: [index], with: .automatic)
-            updateEditButtonStatus()
+            updateEditButtonState()
         }
     }
     
