@@ -80,8 +80,8 @@ final class SubTasksViewController: UITableViewController {
 
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
         let subTask = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
+       
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
             storageManager.delete(subTask, fromTask: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -89,18 +89,29 @@ final class SubTasksViewController: UITableViewController {
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
-            
-            
+            showAlert(for: subTask) {
+                tableView.reloadRows(at: [indexPath], with: .automatic)
+            }
             isDone(true)
         }
         
         let doneAction = UIContextualAction(style: .normal, title: "Done") { [unowned self] _, _, isDone in
+            storageManager.setStatus(ofSubtask: subTask, inTask: task, asCompleted: true)
+            guard let newRow = completedSubTasks.index(of: subTask) else { return }
+            let newIndexPath = IndexPath(row: newRow, section: 1)
+            tableView.moveRow(at: indexPath, to: newIndexPath)
+            tableView.cellForRow(at: newIndexPath)?.accessoryType = .checkmark
 
             isDone(true)
         }
         
         let undoneAction = UIContextualAction(style: .normal, title: "Undone") { [unowned self] _, _, isDone in
-
+            storageManager.setStatus(ofSubtask: subTask, inTask: task, asCompleted: false)
+            guard let newRow = currentSubTasks.index(of: subTask) else { return }
+            let newIndexPath = IndexPath(row: newRow, section: 0)
+            tableView.moveRow(at: indexPath, to: newIndexPath)
+            tableView.cellForRow(at: newIndexPath)?.accessoryType = .none
+            
             isDone(true)
         }
         
