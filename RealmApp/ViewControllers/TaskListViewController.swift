@@ -12,7 +12,7 @@ import RealmSwift
 final class TaskListViewController: UITableViewController {
 
     // Данные типа Results автобновляемы, т.е. отображают актуальное состояние БД
-    private var tasks: Results<Task>!
+    lazy private var tasks: Results<Task> = storageManager.realm.objects(Task.self).sorted(byKeyPath: "date")
     private let storageManager = StorageManager.shared
     
     override func viewDidLoad() {
@@ -24,10 +24,7 @@ final class TaskListViewController: UITableViewController {
         )
         
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        
         createTempData()
-        tasks = storageManager.realm.objects(Task.self)
-        
         updateEditButtonStatus()
     }
     
@@ -38,6 +35,8 @@ final class TaskListViewController: UITableViewController {
     }
     
     @IBAction func sortingList(_ sender: UISegmentedControl) {
+        tasks = storageManager.realm.objects(Task.self).sorted(byKeyPath: (sender.selectedSegmentIndex == 0) ? "date" : "title")
+        tableView.reloadData()
     }
     
     @objc private func addButtonPressed() {
@@ -118,6 +117,13 @@ final class TaskListViewController: UITableViewController {
         let task = tasks[indexPath.row]
         subTasksVC.task = task
     }
+    
+    private func fillNewTask(_ task: Task) {
+        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+        guard let subTasksVC = storyBoard.instantiateViewController(withIdentifier: "SubTasksViewController") as? SubTasksViewController else { return }
+        subTasksVC.task = task
+        navigationController?.pushViewController(subTasksVC, animated: true)
+    }
 
 }
 
@@ -148,6 +154,7 @@ extension TaskListViewController {
             let index = IndexPath(row: tasks.count - 1, section: 0)
             tableView.insertRows(at: [index], with: .automatic)
             updateEditButtonStatus()
+            fillNewTask(task)
         }
     }
 }
