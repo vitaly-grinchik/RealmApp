@@ -98,15 +98,18 @@ class SubTasksViewController: UITableViewController {
             isDone(true)
         }
         
-        let undoneAction = UIContextualAction(style: .normal, title: "Done") { [unowned self] _, _, isDone in
+        let undoneAction = UIContextualAction(style: .normal, title: "Undone") { [unowned self] _, _, isDone in
 
             isDone(true)
         }
         
         editAction.backgroundColor = .orange
         doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        undoneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        // Collecting all actions together
+        let actionSet = [(indexPath.section == 0 ? doneAction : undoneAction), editAction, deleteAction]
         
-        return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
+        return UISwipeActionsConfiguration(actions: actionSet)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
