@@ -25,7 +25,6 @@ final class TaskListViewController: UITableViewController {
         
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
         createTempData()
-        updateEditButtonStatus()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,6 +47,7 @@ final class TaskListViewController: UITableViewController {
             DataManager.shared.createTempData { [unowned self] in
                 UserDefaults.standard.set(true, forKey: "done")
                 tableView.reloadData()
+                updateEditButtonStatus()
             }
         }
     }

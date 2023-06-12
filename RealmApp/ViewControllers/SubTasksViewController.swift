@@ -34,6 +34,13 @@ final class SubTasksViewController: UITableViewController {
         updateEditButtonState()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if task.subTasks.isEmpty {
+            showAlert()
+        }
+    }
+    
     @objc private func addButtonPressed() {
         showAlert()
     }
