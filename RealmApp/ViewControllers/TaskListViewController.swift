@@ -53,7 +53,7 @@ final class TaskListViewController: UITableViewController {
     }
     
     private func updateEditButtonStatus() {
-        editButtonItem.isEnabled = tasks.isEmpty ? false : true
+        editButtonItem.isEnabled = !tasks.isEmpty
     }
     
     // MARK: - UITableViewDataSource
@@ -118,6 +118,7 @@ final class TaskListViewController: UITableViewController {
         subTasksVC.task = task
     }
     
+    // Open alert of a new subtask on segue automaticaly
     private func fillNewTask(_ task: Task) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         guard let subTasksVC = storyBoard.instantiateViewController(withIdentifier: "SubTasksViewController") as? SubTasksViewController else { return }
