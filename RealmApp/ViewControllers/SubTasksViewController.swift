@@ -32,6 +32,7 @@ final class SubTasksViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateEditButtonState()
+        // Automaticaly open alert for newly created task
         if task.subTasks.isEmpty {
             showAlert()
         }
@@ -52,6 +53,15 @@ final class SubTasksViewController: UITableViewController {
     
     private func updateEditButtonState() {
         editButtonItem.isEnabled = !task.subTasks.isEmpty
+    }
+    
+    // Section headers update
+    private func checkTableSectionFilling() {
+        if currentSubTasks.isEmpty {
+            tableView.reloadSections([0], with: .automatic)
+        } else if completedSubTasks.isEmpty {
+            tableView.reloadSections([1], with: .automatic)
+        }
     }
     
     // MARK: - UITableViewDataSource
@@ -86,6 +96,7 @@ final class SubTasksViewController: UITableViewController {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
             storageManager.delete(subTask, fromTask: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            checkTableSectionFilling()
             updateEditButtonState()
         }
         
@@ -102,7 +113,8 @@ final class SubTasksViewController: UITableViewController {
             let newIndexPath = IndexPath(row: newRow, section: 1)
             tableView.moveRow(at: indexPath, to: newIndexPath)
             tableView.cellForRow(at: newIndexPath)?.accessoryType = .checkmark
-
+            checkTableSectionFilling()
+            
             isDone(true)
         }
         
@@ -112,6 +124,7 @@ final class SubTasksViewController: UITableViewController {
             let newIndexPath = IndexPath(row: newRow, section: 0)
             tableView.moveRow(at: indexPath, to: newIndexPath)
             tableView.cellForRow(at: newIndexPath)?.accessoryType = .none
+            checkTableSectionFilling()
             
             isDone(true)
         }
@@ -119,7 +132,7 @@ final class SubTasksViewController: UITableViewController {
         editAction.backgroundColor = .orange
         doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         undoneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-        // Collecting all actions together
+        // Assembling all actions together
         let actionSet = [(subTask.isComplete ? undoneAction : doneAction), editAction, deleteAction]
         
         return UISwipeActionsConfiguration(actions: actionSet)
@@ -151,6 +164,7 @@ extension SubTasksViewController {
                 return
             }
             saveSubTask(with: title, and: note)
+            updateEditButtonState()
         }
         
         present(alert, animated: true)
@@ -160,7 +174,6 @@ extension SubTasksViewController {
         storageManager.save(subTaskWithTitle: title, withNote: note, toTask: task) { subTask in
             let index = IndexPath(row: currentSubTasks.count - 1, section: 0)
             tableView.insertRows(at: [index], with: .automatic)
-            updateEditButtonState()
         }
     }
     

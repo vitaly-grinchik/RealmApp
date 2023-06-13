@@ -76,20 +76,6 @@ final class StorageManager {
         }
     }
     
-    func done(_ task: Task) {
-        write {
-            task.subTasks.setValue(true, forKey: "isComplete")
-        }
-    }
-    
-    func done(_ subTask: SubTask, inTask task: Task) {
-        write {
-            guard let index = task.subTasks.index(of: subTask) else { return }
-            task.subTasks[index].setValue(true, forKey: "isComplete")
-        }
-    }
-
-    
     func setStatus(ofTask task: Task, asCompleted status: Bool) {
         write {
             task.subTasks.setValue(status, forKey: "isComplete")
