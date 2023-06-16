@@ -51,14 +51,12 @@ final class StorageManager {
     }
     
     func save(_ subTask: SubTask,
-              inTask task: Task,
               withNewTitle title: String,
               withNewNote note: String)
     {
         write {
-            guard let index = task.subTasks.index(of: subTask) else { return }
-            task.subTasks[index].title = title
-            task.subTasks[index].note = note
+            subTask.title = title
+            subTask.note = note
         }
     }
     
@@ -69,23 +67,21 @@ final class StorageManager {
         }
     }
     
-    func delete(_ subtask: SubTask, fromTask task: Task) {
+    func delete(_ subtask: SubTask) {
         write {
-            guard let index = task.subTasks.index(of: subtask) else { return }
-            task.subTasks.remove(at: index)
+            realm.delete(subtask)
         }
     }
     
-    func setStatus(ofTask task: Task, asCompleted status: Bool) {
+    func completeTask(_ task: Task) {
         write {
-            task.subTasks.setValue(status, forKey: "isComplete")
+            task.subTasks.setValue(true, forKey: "isComplete")
         }
     }
     
-    func setStatus(ofSubtask subTask: SubTask, inTask task: Task, asCompleted status: Bool) {
+    func toggleStatus(ofSubtask subTask: SubTask) {
         write {
-            guard let index = task.subTasks.index(of: subTask) else { return }
-            task.subTasks[index].setValue(status, forKey: "isComplete")
+            subTask.isComplete.toggle()
         }
     }
     

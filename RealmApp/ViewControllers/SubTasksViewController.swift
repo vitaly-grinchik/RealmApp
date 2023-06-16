@@ -94,7 +94,7 @@ final class SubTasksViewController: UITableViewController {
         let subTask = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
        
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
-            storageManager.delete(subTask, fromTask: task)
+            storageManager.delete(subTask)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             checkTableSectionFilling()
             updateEditButtonState()
@@ -107,35 +107,30 @@ final class SubTasksViewController: UITableViewController {
             isDone(true)
         }
         
-        let doneAction = UIContextualAction(style: .normal, title: "Done") { [unowned self] _, _, isDone in
-            storageManager.setStatus(ofSubtask: subTask, inTask: task, asCompleted: true)
-            guard let newRow = completedSubTasks.index(of: subTask) else { return }
-            let newIndexPath = IndexPath(row: newRow, section: 1)
-            tableView.moveRow(at: indexPath, to: newIndexPath)
-            tableView.cellForRow(at: newIndexPath)?.accessoryType = .checkmark
-            checkTableSectionFilling()
+        let doneUndoneAction = UIContextualAction(style: .normal,
+                                                  title: subTask.isComplete ? "Undone" : "Done")
+        { [unowned self] _, _, isDone in
+            // Define a row at a section to move to
+            storageManager.toggleStatus(ofSubtask: subTask)
+            guard let newRow = indexPath.section == 0
+                    ? completedSubTasks.index(of: subTask)
+                    : currentSubTasks.index(of: subTask)
+            else { return }
             
-            isDone(true)
-        }
-        
-        let undoneAction = UIContextualAction(style: .normal, title: "Undone") { [unowned self] _, _, isDone in
-            storageManager.setStatus(ofSubtask: subTask, inTask: task, asCompleted: false)
-            guard let newRow = currentSubTasks.index(of: subTask) else { return }
-            let newIndexPath = IndexPath(row: newRow, section: 0)
+            let newIndexPath = IndexPath(row: newRow, section: subTask.isComplete ? 1 : 0)
+                
             tableView.moveRow(at: indexPath, to: newIndexPath)
-            tableView.cellForRow(at: newIndexPath)?.accessoryType = .none
+            tableView.cellForRow(at: newIndexPath)?
+                .accessoryType = subTask.isComplete ? .checkmark : .none
             checkTableSectionFilling()
             
             isDone(true)
         }
         
         editAction.backgroundColor = .orange
-        doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-        undoneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-        // Assembling all actions together
-        let actionSet = [(subTask.isComplete ? undoneAction : doneAction), editAction, deleteAction]
+        doneUndoneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         
-        return UISwipeActionsConfiguration(actions: actionSet)
+        return UISwipeActionsConfiguration(actions: [doneUndoneAction, editAction, deleteAction])
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -156,7 +151,6 @@ extension SubTasksViewController {
         let alert = taskAlertFactory.createAlert { [unowned self] title, note in
             if let subTask, let completion {
                 storageManager.save(subTask,
-                                      inTask: task,
                                       withNewTitle: title,
                                       withNewNote: note
                 )
