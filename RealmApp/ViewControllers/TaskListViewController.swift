@@ -69,7 +69,7 @@ final class TaskListViewController: UITableViewController {
         
         // Cell config
         var content = cell.defaultContentConfiguration()
-        cell.accessoryType = (currentSubTaskQty != 0) ? .none : .checkmark
+        cell.check(ifCompleted: currentSubTaskQty == 0)
         content.text = task.title
         content.secondaryText = (currentSubTaskQty != 0) ? currentSubTaskQty.formatted() : nil
         cell.contentConfiguration = content

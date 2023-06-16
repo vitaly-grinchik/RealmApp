@@ -120,8 +120,7 @@ final class SubTasksViewController: UITableViewController {
             let newIndexPath = IndexPath(row: newRow, section: subTask.isComplete ? 1 : 0)
                 
             tableView.moveRow(at: indexPath, to: newIndexPath)
-            tableView.cellForRow(at: newIndexPath)?
-                .accessoryType = subTask.isComplete ? .checkmark : .none
+            tableView.cellForRow(at: newIndexPath)?.check(ifCompleted: subTask.isComplete)
             checkTableSectionFilling()
             
             isDone(true)
@@ -188,4 +187,12 @@ extension SubTasksViewController {
         }
     }
     
+}
+
+// MARK: - UITableViewCell
+extension UITableViewCell {
+    func check(ifCompleted done: Bool) -> UITableViewCell {
+        self.accessoryType = done ? .checkmark : .none
+        return self
+    }
 }
