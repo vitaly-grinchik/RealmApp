@@ -76,12 +76,7 @@ final class SubTasksViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TasksCell", for: indexPath)
         let subTask = indexPath.section == 0 ? currentSubTasks[indexPath.row] : completedSubTasks[indexPath.row]
-        
-        var content = cell.defaultContentConfiguration()
-        content.text = subTask.title
-        content.secondaryText = subTask.note
-        cell.contentConfiguration = content
-        cell.accessoryType = subTask.isComplete ? .checkmark : .none
+        cell.configure(with: subTask)
         return cell
     }
 
@@ -191,8 +186,15 @@ extension SubTasksViewController {
 
 // MARK: - UITableViewCell
 extension UITableViewCell {
-    func check(ifCompleted done: Bool) -> UITableViewCell {
+    func check(ifCompleted done: Bool) {
         self.accessoryType = done ? .checkmark : .none
-        return self
+    }
+    
+    func configure(with subtask: SubTask) {
+        var content = defaultContentConfiguration()
+        content.text = subtask.title
+        content.secondaryText = subtask.note
+        contentConfiguration = content
+        accessoryType = subtask.isComplete ? .checkmark : .none
     }
 }
